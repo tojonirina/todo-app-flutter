@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:todo/pages/getx/todolist.dart';
-import 'package:todo/pages/getx/todolist_deleted.dart';
-import 'package:todo/pages/getx/todolist_done.dart';
+import 'package:provider/provider.dart';
+import 'package:todo/components/right_to_left_transition.dart';
+import 'package:todo/models/todolist_deleted_model.dart';
+import 'package:todo/models/todolist_done_model.dart';
+import 'package:todo/models/todolist_model.dart';
+import 'package:todo/pages/provider/todolist.dart';
+import 'package:todo/pages/provider/todolist_deleted.dart';
+import 'package:todo/pages/provider/todolist_done.dart';
 import 'package:todo/themes/dark.dart';
 import 'package:todo/themes/light.dart';
-import 'package:get/get.dart';
 
 void main() {
-  runApp(const TodoList());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (create) => TodoListModel()),
+      ChangeNotifierProvider(create: (create) => TodoListDoneModel()),
+      ChangeNotifierProvider(create: (create) => TodoListDeletedModel()),
+    ],
+    child: const TodoList(),
+  ));
 }
 
 class TodoList extends StatelessWidget {
@@ -15,8 +26,8 @@ class TodoList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Todo list GetX',
+    return MaterialApp(
+      title: 'Todo list',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         inputDecorationTheme: const InputDecorationTheme(
@@ -32,7 +43,7 @@ class TodoList extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(10))),
         ),
       ),
-      home: const TodoListHomePage(title: 'TaskX'),
+      home: const TodoListHomePage(title: 'Taska'),
     );
   }
 }
@@ -59,8 +70,8 @@ class _TodoListHomePageState extends State<TodoListHomePage> {
                   padding: const EdgeInsets.all(5),
                   child: IconButton(
                       onPressed: () {
-                        Get.to(const TodoListDonePage(),
-                            transition: Transition.cupertino);
+                        Navigator.push(context,
+                            RightToLeftTransition(const TodoListDonePage()));
                       },
                       icon: const Icon(
                         Icons.check_circle_outline,
@@ -70,8 +81,8 @@ class _TodoListHomePageState extends State<TodoListHomePage> {
                   padding: const EdgeInsets.all(5),
                   child: IconButton(
                       onPressed: () {
-                        Get.to(const TodoListDeletedPage(),
-                            transition: Transition.cupertino);
+                        Navigator.push(context,
+                            RightToLeftTransition(const TodoListDeletedPage()));
                       },
                       icon: const Icon(
                         Icons.delete,
@@ -79,7 +90,7 @@ class _TodoListHomePageState extends State<TodoListHomePage> {
                       ))),
             ],
           ),
-          body: TodoListPage()),
+          body: const TodoListPage()),
     );
   }
 }
